@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plánovač schůzek</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .highlight {
+            background-color: lightgreen !important;
+            cursor: pointer;
+        }
+        #info {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- První obrazovka - Vytvoření nové akce -->
+        <div id="vytvoreniAkce">
+            <h2>Vytvoření nové akce</h2>
+            <form id="formVytvoreniAkce">
+                <div class="form-group">
+                    <label for="nazevAkce">Název akce:</label>
+                    <input type="text" class="form-control" id="nazevAkce" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Vytvořit akci</button>
+            </form>
+        </div>
+
+        <!-- Druhá obrazovka - Zobrazení akce a zadání jmen -->
+        <div id="zobrazeniAkce" style="display: none;">
+            <h2 id="nazevAkceTitle"></h2>
+            <div id="casoveTabulky"></div>
+            <form id="formZadaniJmen">
+                <div class="form-group">
+                    <label for="jmeno">Jméno:</label>
+                    <input type="text" class="form-control" id="jmeno" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Potvrdit účast</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="info" style="display: none;"></div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Funkce pro generování náhodného kódu
+        function generateRandomCode(length) {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+
+        // Vytvoření nové akce
+        $('#formVytvoreniAkce').submit(function (e) {
+            e.preventDefault();
+            var nazevAkce = $('#nazevAkce').val();
+            var kodAkce = generateRandomCode(6); // Vygenerování náhodného kódu
+            var urlAkce = 'nazev-akce-' + kodAkce + '.html'; // Vytvoření URL pro akci
+            window.location.href = urlAkce; // Přesměrování na novou stránku
+        });
+
+        // Zadání jmen a časů
+        $('#formZadaniJmen').submit(function (e) {
+            e.preventDefault();
+            var jmeno = $('#jmeno').val();
+            // Zde můžete uložit informace o účasti do databáze nebo jiného úložiště
+            // Prozatím zde jen zobrazíme, které časy byly vybrány
+            var vybraneCasy = $('.highlight').map(function() {
+                return $(this).data('den') + ':' + $(this).data('hodina');
+            }).get();
+            alert('Vybrané časy pro ' + jmeno + ': ' + vybraneCasy.join(', '));
+        });
+
+        // Zvýraznění časů po kliknutí
+        $(document).on('click', '.cas', function () {
+            $(this).toggleClass('highlight');
+        });
+
+        // Zobrazení informací o účastnících při najetí myší
+        $(document).on('mouseenter', '.cas',
+        function () {
+            var den = $(this).data('den');
+            var hodina = $(this).data('hodina');
+            var uzivateleVCasu = $('.cas[data-den="' + den + '"][data-hodina="' + hodina + '"].highlight').map(function() {
+                return $(this).closest('table').find('th').eq(den).text() + ' ' + hodina + ':00';
+            }).get();
+            var info = 'K dispozici v ' + hodina + ':00: ' + (uzivateleVCasu.length > 0 ? uzivateleVCasu.join(', ') : 'žádný');
+            $('#info').text(info).show();
+        });
+
+        $(document).on('mouseleave', '.cas', function () {
+            $('#info').hide();
+        });
+
+    </script>
+</body>
+</html>
