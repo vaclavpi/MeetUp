@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,17 +68,15 @@
         $('#formVytvoreniAkce').submit(function (e) {
             e.preventDefault();
             var nazevAkce = $('#nazevAkce').val();
-            var kodAkce = generateRandomCode(6); // Vygenerování náhodného kódu
-            var urlAkce = 'nazev-akce-' + kodAkce + '.html'; // Vytvoření URL pro akci
-            window.location.href = urlAkce; // Přesměrování na novou stránku
+            $.post('/vytvorit-akci', { nazevAkce: nazevAkce }, function (data) {
+                window.location.href = data;
+            });
         });
 
         // Zadání jmen a časů
         $('#formZadaniJmen').submit(function (e) {
             e.preventDefault();
             var jmeno = $('#jmeno').val();
-            // Zde můžete uložit informace o účasti do databáze nebo jiného úložiště
-            // Prozatím zde jen zobrazíme, které časy byly vybrány
             var vybraneCasy = $('.highlight').map(function() {
                 return $(this).data('den') + ':' + $(this).data('hodina');
             }).get();
@@ -90,8 +89,7 @@
         });
 
         // Zobrazení informací o účastnících při najetí myší
-        $(document).on('mouseenter', '.cas',
-        function () {
+        $(document).on('mouseenter', '.cas', function () {
             var den = $(this).data('den');
             var hodina = $(this).data('hodina');
             var uzivateleVCasu = $('.cas[data-den="' + den + '"][data-hodina="' + hodina + '"].highlight').map(function() {
