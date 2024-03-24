@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#event-form input, #event-form button {
+    margin-bottom: 10px;
+}
+
+#event-list {
+    margin-top: 20px;
+}
+
+.available-time {
+    background-color: lightgreen;
+}
+
+.unavailable-time {
+    background-color: lightcoral;
+}
